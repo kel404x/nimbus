@@ -14,4 +14,4 @@ const userSchema = new mongoose.Schema({
   wallets: [{ type: String }],  // List of wallet addresses
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('user', userSchema);

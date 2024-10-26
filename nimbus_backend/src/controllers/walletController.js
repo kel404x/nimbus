@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user_model');
 
 // Add a new wallet address for a user
 const addWallet = async (req, res) => {
