@@ -28,7 +28,7 @@ Before cloning and running Nimbus, ensure you have the following installed:
    To clone Nimbus to your local machine, open your terminal and run:  
 
    ```bash
-   git clone https://github.com/your-username/nimbus.git
+   git clone https://github.com/kel404x/nimbus.git
    ```
 
 2. **Navigate to the Project Directory**  
