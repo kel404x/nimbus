@@ -1,0 +1,20 @@
+.container {
+  text-align: center;
+  padding: 20px;
+}
+
+.nft-card {
+  display: inline-block;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  width: 200px;
+  text-align: center;
+}
+
+.nft-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
