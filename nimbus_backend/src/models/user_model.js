@@ -1,25 +1,23 @@
+// user_model.js
 const mongoose = require('mongoose');
 
-// {
-//   "_id": "ObjectId",  // MongoDB-generated unique ID
-//   "userId": "string",  // Unique User ID (e.g., "user_001")
-//   "userName": "string",  // User's display name
-//   "userPFP": "string",  // URL to profile picture
-//   "walletIds": ["ObjectId", "ObjectId"],  // Array of wallet references
-//   "primaryWalletId": "ObjectId",  // Reference to primary wallet
-//   "netWorth": "number",  // Total net worth across all wallets
-//   "createdAt": "string",  // Timestamp of account creation
-//   "updatedAt": "string"   // Timestamp of last update
-// }
+// Define schema for User
+const userSchema = new mongoose.Schema(
+  {
+    userName: { type: String, required: true },
+    userPFP: { type: String, required: false }, 
+    // walletIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wallet' }], // Array of wallet references
+    // primaryWalletId: { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet' }, 
+    wallets: [{ type: String, required: true }], // Array of wallet references
+    primaryWallet: { type: String, required: true }, // Primary wallet reference
+    netWorth: { type: Number, required: true, default: 0 },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  wallets: [{ type: String }],  // List of wallet addresses
-  userId: { type: String, required: true },  // New field for user ID
-  userName: { type: String, required: true },  // New field for user name
-  userPFP: { type: String },  // New field for user profile picture
-  primaryWallet: { type: String , required: true},  // Updated to store a wallet address
-  netWorth: { type: Number, default: 0 },  // New field for net worth
-});
+// Create User model
+const User = mongoose.model('User', userSchema);
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = User;

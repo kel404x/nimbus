@@ -2,7 +2,8 @@ const express = require('express'); // Import the Express framework
 const cors = require('cors'); // Import CORS middleware
 const connectDB = require('./src/config/db'); 
 const nftRoutes = require('./src/routes/nftRoutes'); 
-const walletRoutes = require('./src/routes/walletRoutes');
+const user_routes = require('./src/routes/user_routes')
+
 
 try {
     connectDB(); // Attempt to connect to the database
@@ -19,8 +20,8 @@ app.use(cors());
 // Middleware to parse JSON bodies in incoming requests
 app.use(express.json());
 
-app.use(nftRoutes);
-app.use(walletRoutes);
+// app.use(nftRoutes);
+app.use(user_routes)
 
 
 // Start the server and listen on the specified port

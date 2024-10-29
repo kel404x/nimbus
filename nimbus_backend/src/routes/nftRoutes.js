@@ -1,5 +1,5 @@
 const express = require('express');
-const { getNFTs } = require('../controllers/nftController'); // Import controller
+const { getNFTs } = require('../controllers/nft_controller'); // Import controller
 
 const router = express.Router();
 

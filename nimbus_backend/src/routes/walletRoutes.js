@@ -1,5 +1,5 @@
 const express = require('express');
-const { addWallet, getWallets } = require('../controllers/walletController');
+const { addWallet, getWallets } = require('../controllers/wallet_controller');
 const router = express.Router();
 
 // POST /api/wallet - Add a new wallet

@@ -10,27 +10,22 @@
     <div class="container">
       <h1>nimbus</h1>
 
-      <!-- Wallet Selection Form -->
-      <form id="walletForm">
-        <!-- Add Email Input -->
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
-        
-        <!-- Add Wallet Address Inputs -->
+      <!-- User Information Form -->
+      <form id="userForm">
+        <label for="userName">User Name:</label>
+        <input type="text" id="userName" name="userName" required />
+
         <label for="wallet1">Wallet Address 1:</label>
         <input type="text" id="wallet1" name="wallet1" required />
-        
+
         <label for="wallet2">Wallet Address 2:</label>
         <input type="text" id="wallet2" name="wallet2" required />
-        
-        <br /><br />
-        <button type="button" id="fetchButton">Fetch NFTs</button>
-      </form>
 
-      <!-- NFT Display Section -->
-      <div id="nftDisplay"></div>
+        <br /><br />
+        <button type="submit" id="submitButton">Submit</button>
+      </form>
     </div>
 
-    <script src="script.js"></script> <!-- Link the external JavaScript file -->
+    <script src="script.js"></script>
   </body>
 </html>

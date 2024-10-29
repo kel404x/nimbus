@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-
+// Load environment variables from .env file
 dotenv.config();
 
 // Use the MONGO_URI from the .env file
@@ -12,6 +12,7 @@ const connectDB = async () => {
     await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Optional: Timeout for initial server selection
     });
     console.log('MongoDB connected successfully');
   } catch (err) {

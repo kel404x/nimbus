@@ -4,7 +4,7 @@
 //     "userId": "ObjectId",  // Reference to the owning user
 //     "isPrimary": "boolean",  // True if this is the user's primary wallet
 //     "netWorth": "number",  // Total value of NFTs in the wallet
-//     "nftIds": ["ObjectId", "ObjectId"],  // Array of NFT references
+//     "nftIds": ["ObjectId", "ObjectId"],  // JSON of NFT 
 //     "createdAt": "string",  // Timestamp of wallet creation
 //     "updatedAt": "string"   // Timestamp of the last update
 //   }
