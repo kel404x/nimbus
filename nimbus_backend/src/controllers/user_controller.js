@@ -1,6 +1,7 @@
 // user_controller.js
 
 const User = require('../models/user_model');
+const Wallet = require('../models/wallet_model');
 
 // Controller to create a new user
 /**
@@ -24,14 +25,22 @@ const createUser = async (req, res) => {
       return res.status(400).json({ message: 'User with this primary wallet or username already exists' });
     }
 
+    const newPrimaryWallet = new Wallet({
+      walletAddress: primaryWallet,
+      isPrimary: true,
+      netWorth: 0
+    });
+
+    await newPrimaryWallet.save();
+
     const netWorth = 0; // Assuming netWorth is initialized to 0 or any default value
 
     // Create a new user instance with the data from the request body
     const newUser = new User({
       userName,
       userPFP,
-      wallets,
-      primaryWallet,
+      wallets: [newPrimaryWallet._id], // Assuming wallets array includes additional wallet IDs
+      primaryWallet: newPrimaryWallet._id,
       netWorth,
     });
 

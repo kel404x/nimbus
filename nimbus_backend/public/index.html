@@ -3,35 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delete User</title>
+  <title>Create User</title>
 </head>
 <body>
-  <h2>Delete User</h2>
-  <form id="deleteForm">
+  <h2>Create User</h2>
+  <form id="createForm">
+    <input type="text" id="userName" placeholder="Enter Username" required />
     <input type="text" id="walletAddress" placeholder="Enter Wallet Address" required />
-    <button type="submit">Delete User</button>
+    <button type="submit">Create User</button>
   </form>
 
   <p id="result"></p>
 
   <script>
-    const form = document.getElementById('deleteForm');
+    const form = document.getElementById('createForm');
     const result = document.getElementById('result');
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      const walletAddress = document.getElementById('walletAddress').value;
+      const userName = document.getElementById('userName').value;
+      const primaryWallet = document.getElementById('walletAddress').value;
 
       try {
-        const response = await fetch(`http://localhost:3000/users/wallet/${walletAddress}`, {
-          method: 'DELETE',
+        const response = await fetch('http://localhost:3000/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userName, primaryWallet }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          result.textContent = data.message;
+          result.textContent = 'User created successfully!';
         } else {
           result.textContent = `Error: ${data.message}`;
         }
