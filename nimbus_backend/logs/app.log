@@ -1,0 +1,25 @@
+[2024-10-29T17:27:16.826Z] [INFO] User retrieved successfully: 
+[2024-10-29T17:27:20.590Z] [INFO] User retrieved successfully: 
+[2024-10-29T17:27:22.809Z] [INFO] User retrieved successfully: 
+[2024-10-29T17:28:14.960Z] [ERROR] Error creating user: E11000 duplicate key error collection: test.users index: wallets_1 dup key: { wallets: "0x6CB63E39805e028Bda53F7756BC1BC888C6962A6" }
+[2024-10-29T18:24:52.992Z] [ERROR] Error creating user: 404F7CF401000000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1590:SSL alert number 80
+[2024-10-29T18:26:51.146Z] [WARNING] User already exists with primaryWallet: 0x6CB63E39805e028Bda53F7756BC1BC888C6962A6 or userName: djfndjfnjf
+[2024-10-29T18:27:26.982Z] [INFO] User retrieved successfully: 
+[2024-10-29T18:27:30.244Z] [INFO] User name updated successfully: djfndjfnjf
+[2024-10-29T18:27:33.828Z] [INFO] User retrieved successfully: djfndjfnjf
+[2024-10-29T18:27:39.733Z] [INFO] User retrieved successfully: djfndjfnjf
+[2024-10-29T18:28:00.708Z] [INFO] User retrieved successfully: djfndjfnjf
+[2024-10-29T18:28:20.149Z] [INFO] User retrieved successfully: djfndjfnjf
+[2024-10-29T18:33:52.744Z] [INFO] User retrieved successfully: kel
+[2024-10-29T18:34:59.533Z] [INFO] User retrieved successfully: kel
+[2024-10-29T18:35:02.446Z] [INFO] User retrieved successfully: kel
+[2024-10-29T18:35:05.507Z] [INFO] User retrieved successfully: kel
+[2024-10-29T18:58:09.312Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:01:19.063Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:02:32.701Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:06:46.275Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:09:21.609Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:09:27.991Z] [INFO] User retrieved successfully: kel404
+[2024-10-29T19:58:48.293Z] [INFO] User created successfully: newUser_2302302
+[2024-10-29T19:59:12.661Z] [INFO] User retrieved successfully: newUser_2302302
+[2024-10-29T19:59:30.441Z] [INFO] User retrieved successfully: newUser_2302302

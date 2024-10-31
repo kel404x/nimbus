@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>nimbus</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>nimbus</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete User</title>
+</head>
+<body>
+  <h2>Delete User</h2>
+  <form id="deleteForm">
+    <input type="text" id="walletAddress" placeholder="Enter Wallet Address" required />
+    <button type="submit">Delete User</button>
+  </form>
 
-      <!-- User Information Form -->
-      <form id="userForm">
-        <label for="userName">User Name:</label>
-        <input type="text" id="userName" name="userName" required />
+  <p id="result"></p>
 
-        <label for="wallet1">Wallet Address 1:</label>
-        <input type="text" id="wallet1" name="wallet1" required />
+  <script>
+    const form = document.getElementById('deleteForm');
+    const result = document.getElementById('result');
 
-        <label for="wallet2">Wallet Address 2:</label>
-        <input type="text" id="wallet2" name="wallet2" required />
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-        <br /><br />
-        <button type="submit" id="submitButton">Submit</button>
-      </form>
-    </div>
+      const walletAddress = document.getElementById('walletAddress').value;
 
-    <script src="script.js"></script>
-  </body>
+      try {
+        const response = await fetch(`http://localhost:3000/users/wallet/${walletAddress}`, {
+          method: 'DELETE',
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          result.textContent = data.message;
+        } else {
+          result.textContent = `Error: ${data.message}`;
+        }
+      } catch (error) {
+        result.textContent = 'Server error: ' + error.message;
+      }
+    });
+  </script>
+</body>
 </html>
