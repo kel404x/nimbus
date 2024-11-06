@@ -1,7 +1,7 @@
 const express = require('express'); // Import the Express framework
 const cors = require('cors'); // Import CORS middleware
 const connectDB = require('./src/config/db'); 
-const nftRoutes = require('./src/routes/nftRoutes'); 
+const wallet_routes = require('./src/routes/wallet_routes'); 
 const user_routes = require('./src/routes/user_routes')
 
 
@@ -22,6 +22,7 @@ app.use(express.json());
 
 // app.use(nftRoutes);
 app.use(user_routes)
+app.use(wallet_routes);
 
 
 // Start the server and listen on the specified port

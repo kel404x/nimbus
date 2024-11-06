@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const wallet = require('wallet_model.js')
-
 // Define schema for User
 const userSchema = new mongoose.Schema({
   userName: { type: String, required: true, unique: true },

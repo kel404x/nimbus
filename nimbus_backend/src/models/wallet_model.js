@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const walletSchema = new mongoose.Schema({
   walletAddress: { type: String, required: true, unique: true },
   netWalletWorth: { type: Number, default: 0 },
-  NFTs: { type: Array, default: [] },
+  NFTs: { type: Object, default: {} },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

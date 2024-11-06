@@ -4,7 +4,6 @@ const User = require('../models/user_model');
 const Wallet = require('../models/wallet_model');
 const wallet_controller = require('./wallet_controller')
 
-// Controller to create a new user
 /**
  * Creates a new user in the database.
  * @param {Object} req - The request object containing user data.
@@ -12,29 +11,34 @@ const wallet_controller = require('./wallet_controller')
  */
 const createUser = async (req, res) => {
   try {
-    const { userName, userPFP, wallets, primaryWallet } = req.body;
+    const { userName, userPFP, wallets } = req.body;
 
-    // Check if userName and primaryWallet are defined
-    if (!userName || !primaryWallet) {
-      return res.status(400).json({ message: 'userName and primaryWallet are required' });
+    // Check if userName and wallets array are defined
+    if (!userName || !wallets || wallets.length === 0) {
+      return res.status(400).json({ message: 'userName and at least one wallet address are required' });
     }
 
-    const existingUser = await User.findOne({ $or: [{ primaryWallet }, { userName }] });
-    
+    // Ensure wallets is an array
+    if (!Array.isArray(wallets)) {
+      return res.status(400).json({ message: 'wallets must be an array' });
+    }
+
+    const existingUser = await User.findOne({ userName });
+
     if (existingUser) {
-      console.log(`User already exists with primaryWallet: ${primaryWallet} or userName: ${userName}`, 'WARNING'); // Log warning
-      return res.status(400).json({ message: 'User with this primary wallet or username already exists' });
+      console.log(`User already exists with userName: ${userName}`, 'WARNING');
+      return res.status(400).json({ message: 'User with this username already exists' });
     }
 
+    // Generate wallet IDs using create_wallet_array for wallets array
+    console.log('Received wallets:', wallets);
+    const walletIds = await wallet_controller.create_wallet_array(wallets);
+    console.log('Generated walletIds:', walletIds);
 
-
-    const newPrimaryWallet = new Wallet({
-      walletAddress: primaryWallet,
-      isPrimary: true,
-      netWorth: 0
-    });
-
-    await newPrimaryWallet.save();
+    if (!walletIds || walletIds.length === 0) {
+      console.log('Failed to generate wallet IDs', 'ERROR');
+      return res.status(500).json({ message: 'Failed to generate wallet IDs' });
+    }
 
     const netWorth = 0; // Assuming netWorth is initialized to 0 or any default value
 
@@ -42,22 +46,23 @@ const createUser = async (req, res) => {
     const newUser = new User({
       userName,
       userPFP,
-      wallets: [newPrimaryWallet._id], 
-      primaryWallet: newPrimaryWallet._id,
+      wallets: walletIds,
+      primaryWallet: walletIds[0], // Set the primary wallet as the first wallet in the array
       netWorth,
     });
 
     // Save the user to the database
     const savedUser = await newUser.save();
 
-    console.log(`User created successfully: ${savedUser.userName}`, 'INFO'); // Log user creation
+    console.log(`User created successfully: ${savedUser.userName}`, 'INFO');
     res.status(201).json({ message: 'User created successfully', user: savedUser });
   } catch (error) {
     console.error('Error creating user:', error);
-    console.log('Error creating user: ' + error.message, 'ERROR'); // Log error
+    console.log('Error creating user: ' + error.message, 'ERROR');
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 /**
  * Retrieves a user by their primary wallet address.
