@@ -86,6 +86,8 @@ const updateNFTsForAllWallets = async (req, res) => {
       res.status(500).json({ message: 'Failed to update NFTs for all wallets', error: error.message });
     }
   };
+
+  
 /**
  * Deletes a wallet by its wallet address.
  * @param {string} walletAddress - The wallet address to delete.

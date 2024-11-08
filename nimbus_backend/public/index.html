@@ -1,50 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create User</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Wallet Signature</title>
 </head>
 <body>
-  <h2>Create User</h2>
-  <form id="createForm">
-    <input type="text" id="userName" placeholder="Enter Username" required />
-    <input type="text" id="walletAddress" placeholder="Enter Wallet Address" required />
-    <button type="submit">Create User</button>
-  </form>
-
-  <p id="result"></p>
+  <button onclick="getWalletSignature()">Get Wallet Signature</button>
+  <p id="output"></p>
 
   <script>
-    const form = document.getElementById('createForm');
-    const result = document.getElementById('result');
+    async function getWalletSignature() {
+      if (typeof window.ethereum !== 'undefined') {
+        const provider = window.ethereum;
+        try {
+          // Request accounts from MetaMask
+          const accounts = await provider.request({ method: 'eth_requestAccounts' });
+          const address = accounts[0];
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+          // Message to sign
+          const message = "Please sign this message to connect your wallet.";
 
-      const userName = document.getElementById('userName').value;
-      const primaryWallet = document.getElementById('walletAddress').value;
+          // Request signature from MetaMask
+          const signature = await provider.request({
+            method: 'personal_sign',
+            params: [message, address],
+          });
 
-      try {
-        const response = await fetch('http://localhost:3000/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userName, primaryWallet }),
-        });
+          // Display the address and signature
+          document.getElementById('output').innerText = `Address: ${address}\nSignature: ${signature}`;
 
-        const data = await response.json();
+          // Get network information
+          const networkId = await provider.request({ method: 'net_version' });
+          const chainId = await provider.request({ method: 'eth_chainId' });
 
-        if (response.ok) {
-          result.textContent = 'User created successfully!';
-        } else {
-          result.textContent = `Error: ${data.message}`;
+          // Get balance
+          const balanceWei = await provider.request({
+            method: 'eth_getBalance',
+            params: [address, 'latest'],
+          });
+          const balance = parseFloat(balanceWei) / Math.pow(10, 18); // Convert Wei to Ether
+
+          // Display network and balance information
+          document.getElementById('output').innerText += `\nNetwork ID: ${networkId}\nChain ID: ${chainId}\nExact Balance: ${balance.toFixed(6)} ETH`; // Display balance with 6 decimal places
+
+        } catch (error) {
+          console.error("Error obtaining signature:", error);
         }
-      } catch (error) {
-        result.textContent = 'Server error: ' + error.message;
+      } else {
+        alert("MetaMask is not installed.");
       }
-    });
+    }
   </script>
 </body>
 </html>
