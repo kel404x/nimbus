@@ -4,6 +4,13 @@ const web3 = new Web3();
 // Temporary in-memory storage; in production, replace with a database
 const connectedWallets = {};
 
+/**
+ * Connects an Ethereum wallet by verifying the provided signature.
+ * 
+ * @param {Object} req - The request object containing the wallet address and signature.
+ * @param {Object} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves when the response is sent.
+ */
 const connectEthereumWallet = async (req, res) => {
   const { address, signature } = req.body;
 

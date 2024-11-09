@@ -3,54 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Get Wallet Signature</title>
+  <title>Connect Wallets</title>
 </head>
 <body>
-  <button onclick="getWalletSignature()">Get Wallet Signature</button>
+  <button id="connectPhantomWalletButton">Connect solana</button>
+  <button id="disconnectPhantomWalletButton" style="display:none;">Disconnect solana</button>
+  <button id="connectMetaMaskButton">Connect eth</button>
+  <button id="disconnectMetaMaskButton" style="display:none;">Disconnect eth</button>
+  
+  <p id="walletStatus">Not connected</p>
   <p id="output"></p>
 
-  <script>
-    async function getWalletSignature() {
-      if (typeof window.ethereum !== 'undefined') {
-        const provider = window.ethereum;
-        try {
-          // Request accounts from MetaMask
-          const accounts = await provider.request({ method: 'eth_requestAccounts' });
-          const address = accounts[0];
-
-          // Message to sign
-          const message = "Please sign this message to connect your wallet.";
-
-          // Request signature from MetaMask
-          const signature = await provider.request({
-            method: 'personal_sign',
-            params: [message, address],
-          });
-
-          // Display the address and signature
-          document.getElementById('output').innerText = `Address: ${address}\nSignature: ${signature}`;
-
-          // Get network information
-          const networkId = await provider.request({ method: 'net_version' });
-          const chainId = await provider.request({ method: 'eth_chainId' });
-
-          // Get balance
-          const balanceWei = await provider.request({
-            method: 'eth_getBalance',
-            params: [address, 'latest'],
-          });
-          const balance = parseFloat(balanceWei) / Math.pow(10, 18); // Convert Wei to Ether
-
-          // Display network and balance information
-          document.getElementById('output').innerText += `\nNetwork ID: ${networkId}\nChain ID: ${chainId}\nExact Balance: ${balance.toFixed(6)} ETH`; // Display balance with 6 decimal places
-
-        } catch (error) {
-          console.error("Error obtaining signature:", error);
-        }
-      } else {
-        alert("MetaMask is not installed.");
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
