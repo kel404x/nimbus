@@ -1,27 +1,42 @@
 const Wallet = require('../models/wallet_model');
 const { getNFTs } = require('./nft_controller');
 
+
+
+
 /**
- * Creates an array of wallets and returns their MongoDB _id values,
- * setting the first wallet as the primary wallet.
- * @param {Array} wallets - Array of wallet addresses.
- * @returns {Array} Array of wallet IDs with the first wallet marked as primary.
+ * Creates a wallet if it does not already exist.
+ * @param {Object} req - The request object containing the wallet address.
+ * @param {Object} res - The response object to send the result.
+ * @returns {Promise} A promise that resolves to the created wallet or the existing wallet.
  */
-const create_wallet_array = async (wallets) => {
-    const walletIds = [];
+const createWallet = async (req, res) => {
+  try {
+    const walletAddress = req.body.walletAddress; // Extract walletAddress from request body
 
-    for (let i = 0; i < wallets.length; i++) {
-        const newWallet = new Wallet({
-            walletAddress: wallets[i],
-            isPrimary: i === 0,
-            netWalletWorth: 0,
-        });
-
-        const savedWallet = await newWallet.save();
-        walletIds.push(savedWallet._id);
+    console.log(walletAddress);
+    // Validate walletAddress format (add your own validation logic)
+    if (!walletAddress) {
+        return res.status(400).json({ message: 'Invalid wallet address provided.' }); // Send error response
     }
-    
-    return walletIds; 
+
+    // Check if the wallet already exists
+    const existingWallet = await Wallet.findOne({ walletAddress });
+    if (existingWallet) {
+        console.log(`Wallet already exists: ${walletAddress}`);
+        return res.status(200).json(existingWallet); // Send existing wallet as response
+    }
+
+    // Create a new wallet if it doesn't exist
+    const newWallet = new Wallet({ walletAddress });
+    const savedWallet = await newWallet.save();
+    console.log(`Wallet created: ${walletAddress}`);
+    return res.status(201).json(savedWallet); // Send created wallet as response
+
+  } catch (error) {
+      console.error('Error creating wallet:', error.message); // Improved error logging
+      return res.status(500).json({ message: 'Failed to create wallet: ' + error.message }); // More informative error message
+  }
 };
 
 
@@ -87,7 +102,6 @@ const updateNFTsForAllWallets = async (req, res) => {
     }
   };
 
-  
 /**
  * Deletes a wallet by its wallet address.
  * @param {string} walletAddress - The wallet address to delete.
@@ -106,4 +120,28 @@ const deleteWallet = async (walletAddress) => {
     }
 };
 
-module.exports = { create_wallet_array, updateNFTsForAllWallets, deleteWallet };
+/**
+ * Checks if a wallet exists by its wallet address from the request.
+ * @param {Object} req - The request object containing the wallet address.
+ * @param {Object} res - The response object to send the result.
+ */
+const checkWalletExists = async (req, res) => {
+    const walletAddress = req.body.walletAddress; // Extract walletAddress from request body
+
+    if (!walletAddress) {
+        return res.status(400).json({ message: 'Wallet address is required.' });
+    }
+
+    const exists = await walletExists(walletAddress); // Call the walletExists function
+
+    if (exists) {
+        return res.status(200).json({ message: 'Wallet exists.' });
+    } else {
+        return res.status(404).json({ message: 'Wallet does not exist.' });
+    }
+};
+
+
+
+
+module.exports = { updateNFTsForAllWallets, deleteWallet , createWallet };

@@ -1,8 +1,6 @@
 // user_controller.js
 
 const User = require('../models/user_model');
-const Wallet = require('../models/wallet_model');
-const wallet_controller = require('./wallet_controller')
 
 /**
  * Creates a new user in the database.
@@ -11,17 +9,7 @@ const wallet_controller = require('./wallet_controller')
  */
 const createUser = async (req, res) => {
   try {
-    const { userName, userPFP, wallets } = req.body;
-
-    // Check if userName and wallets array are defined
-    if (!userName || !wallets || wallets.length === 0) {
-      return res.status(400).json({ message: 'userName and at least one wallet address are required' });
-    }
-
-    // Ensure wallets is an array
-    if (!Array.isArray(wallets)) {
-      return res.status(400).json({ message: 'wallets must be an array' });
-    }
+    const {wallets} = req.body;
 
     const existingUser = await User.findOne({ userName });
 
@@ -32,7 +20,7 @@ const createUser = async (req, res) => {
 
     // Generate wallet IDs using create_wallet_array for wallets array
     console.log('Received wallets:', wallets);
-    const walletIds = await wallet_controller.create_wallet_array(wallets);
+    const walletIds = await createWalletArrayFromConnectedWallets(wallets);
     console.log('Generated walletIds:', walletIds);
 
     if (!walletIds || walletIds.length === 0) {

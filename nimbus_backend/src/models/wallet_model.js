@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 // Define schema for Wallet
 const walletSchema = new mongoose.Schema({
+  // user_ref_id: { type: String, required: true },
+  walletName: { type: String, required: false },
   walletAddress: { type: String, required: true, unique: true },
   netWalletWorth: { type: Number, default: 0 },
-  NFTs: { type: Object, default: {} },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+  NFTs: { type: [Object], default: [] },
+}, { timestamps: true });
 
 // Middleware to update `updatedAt` on every document modification
 walletSchema.pre('save', function (next) {

@@ -1,8 +1,7 @@
 const Web3 = require('web3').default;
 const web3 = new Web3();
+const axios = require('axios');
 
-// Temporary in-memory storage; in production, replace with a database
-const connectedWallets = {};
 
 /**
  * Connects an Ethereum wallet by verifying the provided signature.
@@ -23,8 +22,15 @@ const connectEthereumWallet = async (req, res) => {
     const recoveredAddress = web3.eth.accounts.recover(message, signature);
     console.log("Recovered address:", recoveredAddress);
 
-    // Added success response if the signature is verified
+    // Check if recovered address matches the provided address
     if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+
+      // Make a POST request to the /createWallet route on localhost
+      const response = await axios.post('http://localhost:3000/createWallet', { walletAddress: address });
+
+      // Log the response from the /createWallet endpoint
+      console.log('Wallet creation response:', response.data);
+
       return res.json({ success: true, message: "Ethereum wallet connected successfully." });
     }
 
@@ -39,4 +45,4 @@ const connectEthereumWallet = async (req, res) => {
   }
 };
 
-module.exports = { connectEthereumWallet };
+module.exports = { connectEthereumWallet, connectedWalletAddresses };
