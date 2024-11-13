@@ -45,4 +45,5 @@ const connectEthereumWallet = async (req, res) => {
   }
 };
 
-module.exports = { connectEthereumWallet, connectedWalletAddresses };
+module.exports = { connectEthereumWallet };
+

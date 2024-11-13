@@ -5,7 +5,7 @@ const { createWallet } = require('../controllers/wallet_controller');
 const router = express.Router();
 
 router.put('/updateNFTsForAllWallets', updateNFTsForAllWallets);
-router.post('/connect/ethereum', connectEthereumWallet);
+router.post('/connect/connectEthereumWallet', connectEthereumWallet);
 router.post('/createWallet', createWallet);
 
 module.exports = router;

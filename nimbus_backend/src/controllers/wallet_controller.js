@@ -1,9 +1,6 @@
 const Wallet = require('../models/wallet_model');
 const { getNFTs } = require('./nft_controller');
 
-
-
-
 /**
  * Creates a wallet if it does not already exist.
  * @param {Object} req - The request object containing the wallet address.
@@ -144,4 +141,4 @@ const checkWalletExists = async (req, res) => {
 
 
 
-module.exports = { updateNFTsForAllWallets, deleteWallet , createWallet };
+module.exports = { updateNFTsForAllWallets, deleteWallet , createWallet , checkWalletExists};
