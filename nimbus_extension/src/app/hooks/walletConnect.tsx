@@ -5,7 +5,7 @@ export default function WalletConnect() {
                 balance={"hide"}
             />
             <appkit-network-button
-                disabled={true}
+                disabled={false}
             />
         </div>
     );

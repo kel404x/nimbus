@@ -28,7 +28,6 @@ const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
   networks: [mainnet, arbitrum, avalanche, base, optimism, polygon],
-  defaultNetwork: mainnet,
   metadata: metadata,
   themeVariables: {
     '--w3m-color-mix': '#00BB7F',
