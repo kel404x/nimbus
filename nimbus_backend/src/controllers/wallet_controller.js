@@ -9,7 +9,7 @@ const { getNFTs } = require('./nft_controller');
  */
 const createWallet = async (req, res) => {
   try {
-    const walletAddress = req.body.walletAddress; // Extract walletAddress from request body
+    const walletAddress = req.body.walletAddress; 
 
     console.log(walletAddress);
     // Validate walletAddress format (add your own validation logic)

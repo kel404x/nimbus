@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
+import WalletProvider from "../service/wagmi/provider/walletProvider";
 import "./globals.css";
-import WalletProvider from "./provider/walletProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

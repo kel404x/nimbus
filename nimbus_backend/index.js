@@ -12,7 +12,7 @@ try {
 }
 
 const app = express(); // Create an instance of an Express application
-const PORT = 3000; // Define the port number the server will listen on
+const PORT = 3001; // Define the port number the server will listen on
 
 // Use CORS middleware to allow requests from different origins
 app.use(cors());
