@@ -10,7 +10,7 @@ const User = require('../models/user_model')
  */
 const createWallet = async (req, res) => {
   try {
-    const walletAddress = req.body.walletAddress; 
+    const walletAddress = req.walletAddress; 
     const user_id = req.user_id; 
 
     console.log(walletAddress); 
