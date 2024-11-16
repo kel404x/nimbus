@@ -1,5 +1,6 @@
 const Wallet = require('../models/wallet_model');
 const { getNFTs } = require('./nft_controller');
+const User = require('../models/user_model')
 
 /**
  * Creates a wallet if it does not already exist.
@@ -10,8 +11,9 @@ const { getNFTs } = require('./nft_controller');
 const createWallet = async (req, res) => {
   try {
     const walletAddress = req.body.walletAddress; 
+    const user_id = req.user_id; 
 
-    console.log(walletAddress);
+    console.log(walletAddress); 
     // Validate walletAddress format (add your own validation logic)
     if (!walletAddress) {
         return res.status(400).json({ message: 'Invalid wallet address provided.' }); // Send error response
@@ -25,7 +27,7 @@ const createWallet = async (req, res) => {
     }
 
     // Create a new wallet if it doesn't exist
-    const newWallet = new Wallet({ walletAddress });
+    const newWallet = new Wallet({ user_id ,walletAddress });
     const savedWallet = await newWallet.save();
     console.log(`Wallet created: ${walletAddress}`);
     return res.status(201).json(savedWallet); // Send created wallet as response

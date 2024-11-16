@@ -9,33 +9,24 @@ const User = require('../models/user_model');
  */
 const createUser = async (req, res) => {
   try {
-    const {wallets} = req.body;
+    const { userName } = req.body; // Get userName from request body
+    const netWorth = 0;
 
-    const existingUser = await User.findOne({ userName });
+    // Check if userName already exists
+    let uniqueUserName = userName;
+    let userExists = await User.findOne({ userName: uniqueUserName });
 
-    if (existingUser) {
-      console.log(`User already exists with userName: ${userName}`, 'WARNING');
-      return res.status(400).json({ message: 'User with this username already exists' });
+    // If userName exists, append a number to make it unique
+    let counter = 1;
+    while (userExists) {
+      uniqueUserName = `${userName}${counter}`;
+      userExists = await User.findOne({ userName: uniqueUserName });
+      counter++;
     }
 
-    // Generate wallet IDs using create_wallet_array for wallets array
-    console.log('Received wallets:', wallets);
-    const walletIds = await createWalletArrayFromConnectedWallets(wallets);
-    console.log('Generated walletIds:', walletIds);
-
-    if (!walletIds || walletIds.length === 0) {
-      console.log('Failed to generate wallet IDs', 'ERROR');
-      return res.status(500).json({ message: 'Failed to generate wallet IDs' });
-    }
-
-    const netWorth = 0; // Assuming netWorth is initialized to 0 or any default value
-
-    // Create a new user instance with the data from the request body
+    // Create a new user instance with the unique userName
     const newUser = new User({
-      userName,
-      userPFP,
-      wallets: walletIds,
-      primaryWallet: walletIds[0], // Set the primary wallet as the first wallet in the array
+      userName: uniqueUserName,
       netWorth,
     });
 

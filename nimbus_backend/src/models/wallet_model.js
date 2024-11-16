@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define schema for Wallet
 const walletSchema = new mongoose.Schema({
-  // user_ref_id: { type: String, required: true },
+  user_id: { type: String, required: true },
   walletName: { type: String, required: false },
   walletAddress: { type: String, required: true, unique: true },
   netWalletWorth: { type: Number, default: 0 },
