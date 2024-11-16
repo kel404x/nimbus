@@ -10,35 +10,41 @@ const User = require('../models/user_model')
  */
 const createWallet = async (req, res) => {
   try {
-    const walletAddress = req.walletAddress; 
-    const user_id = req.user_id; 
+    const { walletAddress, user_id } = req.body;
 
-    console.log(walletAddress); 
+    console.debug('Received request to create wallet:', { walletAddress, user_id });
+
     // Validate walletAddress format (add your own validation logic)
     if (!walletAddress) {
+        console.debug('Invalid wallet address provided.');
         return res.status(400).json({ message: 'Invalid wallet address provided.' }); // Send error response
     }
 
+    if (!user_id) {
+      console.debug('Invalid user_id provided.');
+      return res.status(400).json({ message: 'Invalid user_id provided.' }); // Send error response
+    }
+
     // Check if the wallet already exists
+    console.debug('Checking if wallet already exists:', walletAddress);
     const existingWallet = await Wallet.findOne({ walletAddress });
     if (existingWallet) {
-        console.log(`Wallet already exists: ${walletAddress}`);
+        console.debug(`Wallet already exists: ${walletAddress}`);
         return res.status(200).json(existingWallet); // Send existing wallet as response
     }
 
     // Create a new wallet if it doesn't exist
-    const newWallet = new Wallet({ user_id ,walletAddress });
+    console.debug('Creating new wallet:', { user_id, walletAddress });
+    const newWallet = new Wallet({ user_id, walletAddress });
     const savedWallet = await newWallet.save();
-    console.log(`Wallet created: ${walletAddress}`);
-    return res.status(201).json(savedWallet); // Send created wallet as response
+    console.debug(`Wallet created successfully: ${walletAddress}`);
+    return res.status(201).json(savedWallet); 
 
   } catch (error) {
       console.error('Error creating wallet:', error.message); // Improved error logging
       return res.status(500).json({ message: 'Failed to create wallet: ' + error.message }); // More informative error message
   }
 };
-
-
 /**
  * Helper function to clean up NFT data by picking necessary fields.
  * @param {Object} nftData - Original NFT data.
