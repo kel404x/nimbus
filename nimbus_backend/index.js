@@ -24,6 +24,23 @@ app.use(express.json());
 app.use(user_routes)
 app.use(wallet_routes);
 
+app.get('/user/getWalletDetails', (req, res) => {
+  const { address } = req.query;
+
+  // Simulate wallet data retrieval
+  if (address) {
+    res.json({
+      walletAddress: address,
+      balance: "2.5 ETH",
+      lastTransaction: "0xabc123",
+      owner: "John Doe",
+    });
+  } else {
+    res.status(400).json({ message: "Wallet address is required." });
+  }
+});
+
+
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {

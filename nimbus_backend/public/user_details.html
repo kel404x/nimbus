@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Details</title>
+  <style>
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>User Wallet Details</h1>
+  <p id="walletAddress">Fetching wallet address...</p>
+  <pre id="walletDetails">Fetching wallet details...</pre>
+  <p id="walletStatus"></p>
+  <button id="connectWalletButton" style="display: none;">Connect Wallet</button>
+
+  <script>
+    // Function to get query parameters
+    function getQueryParameter(param) {
+      const queryParams = new URLSearchParams(window.location.search);
+      return queryParams.get(param);
+    }
+
+    // Fetch wallet details
+    async function fetchWalletDetails() {
+      const walletAddress = getQueryParameter('address'); // Get the wallet address from query string
+
+      if (walletAddress) {
+        document.getElementById('walletAddress').innerText = `Wallet Address: ${walletAddress}`;
+        
+        try {
+          // Replace the URL below with your actual backend API endpoint
+          const response = await fetch('http://localhost:3001/connectWallet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ walletAddress }),
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            const user_ID = data.user_ID; // Get userName from backend response
+            document.getElementById('walletDetails').innerText = `Wallet Details:\n${JSON.stringify(data, null, 2)}`;
+
+            // Show the connect wallet button
+            const connectButton = document.getElementById('connectWalletButton');
+            connectButton.style.display = 'block';
+
+            // Add event listener for the button
+            connectButton.addEventListener('click', () => {
+              connectEthereumWalletWithUserName(user_ID);
+            });
+          } else {
+            document.getElementById('walletDetails').innerText = `Error: ${data.message}`;
+          }
+        } catch (error) {
+          console.error("Error fetching wallet details:", error);
+          document.getElementById('walletDetails').innerText = 'Error fetching wallet details.';
+        }
+      } else {
+        document.getElementById('walletAddress').innerText = 'No wallet address provided.';
+      }
+    }
+
+    // Function to connect to MetaMask (Ethereum Wallet) with userName
+    async function connectEthereumWalletWithUserName(user_ID) {
+        
+      if (!user_ID) {
+        document.getElementById('walletStatus').innerText = 'user_ID not provided.';
+        return;
+      }
+
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const provider = window.ethereum;
+
+          // Request accounts from Ethereum wallet
+          const accounts = await provider.request({ method: 'eth_requestAccounts' });
+          const address = accounts[0];
+          document.getElementById('walletStatus').innerText = `Connected as ${address}`;
+
+          // Message for user to sign
+          const message = "Please sign this message to connect your wallet.";
+
+          // Request signature from Ethereum wallet
+          const signature = await provider.request({
+            method: 'personal_sign',
+            params: [message, address],
+          });
+
+          // Send address, signature, and userName to the backend for verification
+          const response = await fetch('http://localhost:3001/connectMultipleWallets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address, signature, user_ID }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            document.getElementById('walletStatus').innerText = `Wallet connected successfully for ${userName}.`;
+          } else {
+            document.getElementById('walletStatus').innerText = 'Failed to connect Ethereum wallet.';
+          }
+        } catch (error) {
+          console.error("Ethereum wallet connection error:", error);
+          document.getElementById('walletStatus').innerText = 'Error connecting Ethereum wallet.';
+        }
+      } else {
+        alert("Ethereum wallet is not installed.");
+      }
+    }
+
+    // Call the function on page load
+    fetchWalletDetails();
+  </script>
+</body>
+</html>

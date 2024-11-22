@@ -45,6 +45,7 @@ const createWallet = async (req, res) => {
       return res.status(500).json({ message: 'Failed to create wallet: ' + error.message }); // More informative error message
   }
 };
+
 /**
  * Helper function to clean up NFT data by picking necessary fields.
  * @param {Object} nftData - Original NFT data.
@@ -61,51 +62,50 @@ const sanitizeNFTData = (nftData) => {
   }));
 };
 
+
 /**
- * Updates NFTs for each wallet in the provided array of wallet addresses.
- * Accepts the wallet addresses from the request body and sends a response.
- * @param {Object} req - The request object containing wallet addresses in the body.
+ * Updates NFTs for a single wallet provided in the request body.
+ * Accepts the wallet address from the request body and sends a response.
+ * @param {Object} req - The request object containing a wallet address in the body.
  * @param {Object} res - The response object to send the result.
  */
-const updateNFTsForAllWallets = async (req, res) => {
-    try {
-      // Extract wallets array from the request body
-      const { wallets } = req.body;
-  
-      // Validate that wallets is provided and is an array
-      if (!wallets || !Array.isArray(wallets) || wallets.length === 0) {
-        return res.status(400).json({ message: 'Invalid or empty wallets array provided.' });
-      }
-  
-      // Fetch all wallets by their addresses
-      const walletDocs = await Wallet.find({ walletAddress: { $in: wallets } });
-  
-      if (walletDocs.length === 0) {
-        return res.status(404).json({ message: 'No wallets found for the provided addresses.' });
-      }
-  
-      // Iterate over each wallet and fetch its NFTs
-      for (let wallet of walletDocs) {
-        const nftData = await getNFTs(wallet.walletAddress); // Fetch NFT data
-  
-        // Sanitize NFT data to avoid complex nested structures
-        const sanitizedNFTData = sanitizeNFTData(nftData);
-  
-        // Update wallet's NFT field with sanitized data
-        wallet.NFTs = sanitizedNFTData;
-  
-        // Save the updated wallet to the database
-        await wallet.save();
-      }
-  
-      console.log('NFTs updated for all wallets.');
-      res.status(200).json({ message: 'NFTs updated successfully for all wallets.', updatedWallets: walletDocs });
-  
-    } catch (error) {
-      console.error('Error updating NFTs for wallets:', error);
-      res.status(500).json({ message: 'Failed to update NFTs for all wallets', error: error.message });
+const updateNFTsCollection = async (req, res) => {
+  try {
+    // Extract wallet address from the request body
+    const { walletAddress } = req.body;
+
+    // Validate that walletAddress is provided
+    if (!walletAddress) {
+      return res.status(400).json({ message: 'Invalid or missing wallet address provided.' });
     }
-  };
+
+    // Fetch the wallet by its address
+    const wallet = await Wallet.findOne({ walletAddress });
+
+    if (!wallet) {
+      return res.status(404).json({ message: 'No wallet found for the provided address.' });
+    }
+
+    // Fetch NFT data for the wallet
+    const nftData = await getNFTs(wallet.walletAddress); // Fetch NFT data
+
+    // Sanitize NFT data to avoid complex nested structures
+    const sanitizedNFTData = sanitizeNFTData(nftData);
+
+    // Update wallet's NFT field with sanitized data
+    wallet.NFTs = sanitizedNFTData;
+
+    // Save the updated wallet to the database
+    await wallet.save();
+
+    console.log('NFTs updated for the wallet.');
+    res.status(200).json({ message: 'NFTs updated successfully for the wallet.', updatedWallet: wallet });
+
+  } catch (error) {
+    console.error('Error updating NFTs for the wallet:', error);
+    res.status(500).json({ message: 'Failed to update NFTs for the wallet', error: error.message });
+  }
+};
 
 /**
  * Deletes a wallet by its wallet address.
@@ -147,6 +147,116 @@ const checkWalletExists = async (req, res) => {
 };
 
 
+/**
+ * Connects a wallet to the system.
+ * 
+ * This function checks if a wallet with the given address already exists.
+ * If it does, it returns the associated user information.
+ * If not, it creates a new user and wallet, then returns the new user and wallet information.
+ * 
+ * @param {Object} req - The request object containing the wallet address in the body.
+ * @param {Object} res - The response object used to send back the appropriate HTTP response.
+ */
+const connectWallet = async (req, res) => {
+  const { walletAddress } = req.body;
+
+  // Validate the presence of a wallet address in the request
+  if (!walletAddress) {
+      return res.status(400).json({ error: "Wallet address is required" });
+  }
+
+  try {
+      // Check if the wallet already exists in the database
+      let wallet = await Wallet.findOne({ walletAddress });
+
+      if (wallet) {
+          // If the wallet exists, fetch the associated user
+          const user = await User.findById(wallet.user_id);
+          
+          return res.status(200).json({
+              userName: user.userName,
+              user_ID: wallet.user_id,
+              wallet,
+          });
+      }
+
+      // If the wallet doesn't exist, create a new user
+      const userName = `user_${Date.now()}`; // Generate a unique username
+      const newUser = new User({ userName });
+      const savedUser = await newUser.save();
+
+      // Create a new wallet associated with the newly created user
+      const newWallet = new Wallet({
+          user_id: savedUser._id,
+          walletAddress
+      });
+      const savedWallet = await newWallet.save();
+
+      // Respond with the newly created user and wallet information
+      res.status(201).json({
+          userName: savedUser.userName,
+          user_ID: savedUser._id,
+          wallet: savedWallet,
+      });
+  } catch (error) {
+      // Log the error and respond with a 500 status code for server errors
+      console.error("Error handling wallet connection:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+/**
+ * Connects multiple wallets to an existing user.
+ * 
+ * This function checks if a user with the given userName exists.
+ * If it does, it adds the new wallet address to the user.
+ * If not, it returns an error indicating the user does not exist.
+ * 
+ * @param {Object} req - The request object containing the userName and wallet address in the body.
+ * @param {Object} res - The response object used to send back the appropriate HTTP response.
+ */
+const connectMultipleWallets = async (req, res) => {
+  const { user_ID, walletAddress } = req.body;
+
+  // Validate the presence of a userName and wallet address in the request
+  if (!user_ID || !walletAddress) {
+      return res.status(400).json({ error: "user_ID and wallet address are required" });
+  }
+
+  try {
+      // Check if the user exists in the database
+      const user = await User.findOne({ user_id: user_ID });
+
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
+
+      // Check if the wallet already exists for the user
+      let wallet = await Wallet.findOne({ walletAddress, user_id: user._id });
+
+      if (wallet) {
+          return res.status(409).json({ error: "Wallet address already associated with this user" });
+      }
+
+      // Create a new wallet associated with the existing user
+      const newWallet = new Wallet({
+          user_id: user._id,
+          walletAddress
+      });
+      const savedWallet = await newWallet.save();
+
+      // Respond with the updated user and new wallet information
+      res.status(201).json({
+          userName: user.userName,
+          user_ID: user._id,
+          wallet: savedWallet,
+      });
+  } catch (error) {
+      // Log the error and respond with a 500 status code for server errors
+      console.error("Error handling multiple wallet connection:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
-module.exports = { updateNFTsForAllWallets, deleteWallet , createWallet , checkWalletExists};
+module.exports = { updateNFTsCollection, deleteWallet , createWallet , checkWalletExists, connectWallet, connectMultipleWallets};

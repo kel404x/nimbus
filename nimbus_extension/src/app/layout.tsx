@@ -1,3 +1,4 @@
+import { UserProvider } from "@/service/user/UserProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
@@ -30,7 +31,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <WalletProvider cookies={cookies}>{children}</WalletProvider>
+        <WalletProvider cookies={cookies}>
+          <UserProvider>
+            {children}
+          </UserProvider>
+        </WalletProvider>
       </body>
     </html>
   )
